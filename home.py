@@ -1,23 +1,65 @@
+# python text to speech module. It converts text in speech form.
 import pyttsx3
 from datetime import *
+# this module detect human voice and converts it into text form.
 import speech_recognition as sr
+# this module is use to request on server.
 import requests
+# This module use to fetch data from wikipedia
 import wikipedia
+# This module is use to open web browser
 import webbrowser
+# This module is use to work on system os
 import os
 import time
 import calculator
-import speedtest
+# This module is used for Test internet speed
+import speedtest   #pip install speedtest-cli
+# This module tells us that which os we are using basically it tells all the information about our os
 import platform
+# This module is use to automate tasks
 import pyautogui
 import psutil
+import pyjokes
+from googlesearch import search
+
 ############################################ Weather API #########################################################
 
 # newsUrl = 'http://newsapi.org/v2/top-headlines?country=in&apiKey=9f17ea0361774831bb8906e2426c1e22'
 api_address = "http://api.openweathermap.org/data/2.5/weather?appid=40b98f754f6b23dc8725fd2cfc6d9769&q="
 
+def currentDay ():
+    """
+    This function tells current day.
+    """
+    today = date.today().strftime("%A")
+    speak(f"Today's date is : {today}")
+    
+def currentDate():
+    """
+    This function tells current date.
+    """
+    date1 = date.today()
+    speak(date1)
 
-def batterPercantage():
+def jokes():
+    """
+    This function tells joke 
+    using pyjoke module.
+    """
+    My_joke = pyjokes.get_joke(language="en", category="all")  
+    speak(My_joke)
+    query=take_command().lower()
+    if "haha " in query or "good one" in query:
+        speak("thanks sir should i tell you one more joke")
+        query = take_command().lower()
+        if "yeah" in query:
+            jokes()
+        else :
+            return  
+
+def batteryPercantage():
+    
     battery = psutil.sensors_battery()
     if battery.percent == 100:
         speak("battery is fully charged")
@@ -31,20 +73,28 @@ def batterPercantage():
 def fullSystemDetail():
     pass
 
-
 def osName ():
     os = platform.system()
     speak(f"you are using {os} operating system")
 
-
 def screenshot():
-    myScreenshot = pyautogui.screenshot()
-    speak("taking screenshot")
-    lst = os.listdir('jarvis\screenshot')
-    lstLength = int(len(lst))
-    path = f"jarvis\screenshot\screenshot{lstLength+1}.png"
-    myScreenshot.save(path)
+    try:
 
+        isdir = os.path.isdir("screenshot")
+        if isdir==True:
+            myScreenshot = pyautogui.screenshot()
+            speak("taking screenshot")
+            lst = os.listdir('screenshot')
+            lstLength = int(len(lst))
+            path = f"screenshot\\screenshot{lstLength+1}.png"
+            myScreenshot.save(path)
+            speak("Screenshot taken")
+        else :
+            os.mkdir("screenshot")
+            screenshot()
+    except Exception as e:
+        print(e)
+        speak("Can not take screenshot")
 
 def speedTest():
     speak("ok sir trying to fetch download speed")
@@ -54,12 +104,10 @@ def speedTest():
     downloadSpeed = "{:.2f}".format(downloadSpeed)
     speak(f"{downloadSpeed} Megabyte per second")
 
-
-def time ():
+def current_time ():
     now = datetime.now()
     current_time = now.strftime("%H:%M")
     speak(f"The time is {current_time}")
-
 
 def news():
     newsUrl = 'http://newsapi.org/v2/top-headlines?country=in&apiKey=9f17ea0361774831bb8906e2426c1e22'
@@ -71,7 +119,6 @@ def news():
         speak(title)
         print(f"        {description}")
         speak(description)
-
 
 def weather_data():
     """
@@ -88,7 +135,6 @@ def weather_data():
     # formatted_data = weather_data + temp_data
     # print(json_data)
     speak(f"Hello sir the weather is {weather_data} and the temerature is {temp_data} degree celsius")
-
 
 ################################################### Greet Function #############################################
 def greet():
@@ -118,7 +164,6 @@ def greet():
     else:
         speak("Hello Good night")
 
-
 ################################################ Speak Function ###############################################
 def speak(audio):
     engine = pyttsx3.init()
@@ -126,14 +171,13 @@ def speak(audio):
     engine.say(audio)
     engine.runAndWait()
 
-
 ############################################### Take Command ##################################################
 def take_command():
     r = sr.Recognizer()
     with sr.Microphone() as source:
         print("Listening.......")
-        r.pause_threshold = .5
-        r.energy_threshold = 7000
+        r.pause_threshold = 2
+        r.energy_threshold = 10000
         audio = r.listen(source)
 
     try:
@@ -147,18 +191,15 @@ def take_command():
         return "none"
     return query
 
-
 ######################################### Who are You ######################################################
 def whoareyou():
     speak("Hello ")
-    time.sleep(.5)
-    speak("hi i am edith ")
-
+    time.sleep(1)
+    speak("hi i am edith")
 
 def mathOperation ():
     result = calculator.binaryCalculator()
     speak(result)
-
 
 def shutdown():
     os = platform.system()
@@ -172,10 +213,11 @@ def shutdown():
     else:
         speak("Sorry but it can only used in windows , linux , macos")
 
-
 def restart():
     os = platform.system()
+
     os = os.lower()
+    
     if os =='windows':
         os.system("shutdown/r")
     elif os =='linux':
@@ -184,7 +226,11 @@ def restart():
         os.system()
     else:
         speak("Sorry but it can only used in windows , linux , macos")
-    
-    
+
+
+def open_website(query):
+    for j in search(query, tld="co.in", num=1, stop=1, pause=2):
+    	webbrowser.open(j)
+
 if __name__ == '__main__':
     pass
