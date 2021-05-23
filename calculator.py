@@ -1,70 +1,170 @@
 import pyttsx3
-import speech_recognition as sr
-
-
 def speak(audio):
+    """
+    This function convert text 
+    data into speech.
+    """
     engine = pyttsx3.init()
     # engine.setProperty()
     engine.say(audio)
     engine.runAndWait()
 
-
-def take_command():
-    r = sr.Recognizer()
-    with sr.Microphone() as source:
-        print("Listening.......")
-        r.pause_threshold = .5
-        r.energy_threshold = 7000
-        audio = r.listen(source)
-
-    try:
-        print("Recognizing....")
-        query = r.recognize_google(audio)
-        # print(f"user said : {query}\n")
-
-    except Exception as e:
-        print(e)
-        speak("Say that again please....")
-        return "none"
-    return query
-
-
-def binaryCalculator():
-    try:
-        query = take_command().lower()
-        print(query)
-        query = query.split()
-        print(query)
-        if query[1] == 'plus' or query[1] == '+' or query[1] == 'sum':
-            result = int(query[0]) + int(query[2])
+def add_num(para):
+    """
+    This function add two numbers.
+    """
+    query = para.split()
+    list = []
+    for i in query:
+        if i.isdigit():
+            list.append(int(i))
+    print(list[1]+list[0])
+    speak(f"{list[1]} plus {list[0]} is{list[1]+list[0]}")
+     
+def subtract_num(para):
+    """
+    This function subtract two numbers
+    """
+    query = para.split()
+    list = []
+    for i in query:
+        if i.isdigit():
+            list.append(int(i))    
+    print(list[0]-list[1])
+    speak(f"{list[1]} minus {list[0]} is{list[1]-list[0]}")
 
 
-        elif query[1] == 'subtract' or query[1] == 'minus' or query[1] == '-':
-            result = int(query[0]) - int(query[2])
+def multiply_num(para):
+    """
+    This function multiply two numbers
+    """
+    query = para.split()
+    list = []
+    for i in query:
+        if i.isdigit():
+            list.append(int(i))
+    print(list[0]*list[1])
+    speak(f"{list[1]} multiplyed by {list[0]} is equal to {list[1]*list[0]}")
+def devide_num(para):
+    """
+    This function devide two numbers.
+    """
+    query = para.split()
+    list = []
+    for i in query:
+        if i.isdigit():
+            list.append(int(i))
+    if list[1]==0:
+        print("can not devided by zero")
+    else:
+        print(list[0]/list[1])  
+    speak(f"{list[0]} devided by{list[1]} is{list[0]/list[1]}")          
 
+def reminder(para):
+    """
+    This function give reminder two numbers
+    """
+    query = para.split()
+    list = []
+    for i in query:
+        if i.isdigit():
+            list.append(int(i))   
+    print(list[0]%list[1])    
+    speak(f"reminder of {list[0]} and {list[1]} is equal{list[0]%list[1]}")
+      
+def squre (para):
+    """
+    This function calculate
+    sqare of a number.
+    """
+    query = para.split()
+    list = []
+    for i in query:
+        if i.isdigit():
+            list.append(int(i))   
+    print(list[0]*list[0])
+    speak(f"squre of {list[0]} is {list[0]*list[0]}")
 
-        elif query[1] == 'into' or query[1] == 'multiply' or query[1] == '*' or query[1] == 'multiply by':
-            result = int(query[0]) * int(query[2])
+def cube (para):
+    """
+    This function calculate
+    cube of a number.
+    """
+    query = para.split()
+    list = []
+    for i in query:
+        if i.isdigit():
+            list.append(int(i))   
+    print(list[0]*list[0]*list[0])
+    speak(f"cube of {list[0]} is {list[0]*list[0]*list[0]}")
 
+def power(para):
+    """
+    This function calculate
+    power of a number.
+    """
+    query = para.split()
+    list = []
+    for i in query:
+        if i.isdigit():
+            list.append(int(i))  
+    print(list[0]**list[1])   
+    speak(f"value of {list[0]} to the power {list[1]} is {list[0]**list[1]}")     
 
-        elif query[1] == 'divieded' or query[1] == 'by':
-            result = int(query[0]) // int(query[2])
-
-        elif query[1] == 'module' or query[1] == 'remainder' or query[1] == '%':
-            result = int(query[0]) % int(query[2])
-
-        else:
-            print("Wrong input sir")
-
-        return result
-
-    except Exception as e:
-        print("Please speak in 3 plus 4 formate  ")
-
-
+def sqrt(para):
+    """
+    This function calculate
+    sqare root of a number.
+    """
+    query = para.split()
+    list = []
+    for i in query:
+        if i.isdigit():
+            list.append(int(i))  
+    print(list[0]**0.5)    
+    speak(f"square root of {list[0]} is {list[0]**0.5}")    
+def cube_root(para):
+    """
+    This function calculate
+    cube root of a number.
+    """
+    query = para.split()
+    list = []
+    for i in query:
+        if i.isdigit():
+            list.append(int(i))   
+    print(list[0]**(1/3))
+    speak(f"cube root of {list[0]} is {list[0]**1/3}")
 if __name__ == '__main__':
-    while True:
+    
+    query = input("Enter a para with numbers:")
+    if 'add' in query:
+        add_num(query)
 
-        result = binaryCalculator()
-        speak(result)
-        print(result)
+    elif 'subtract' in query:
+        subtract_num(query)
+    
+    elif 'multiply' in query:
+        multiply_num(query)
+
+    elif 'devide' in query:
+        devide_num(query)
+
+    
+    elif 'reminder' in query:
+        reminder(query)
+    
+    elif 'squre' in query:
+        squre(query)
+    
+    elif 'cube' in query:
+        cube(query)
+    
+    elif 'square root' in query:
+        sqrt()    
+    
+    elif 'cube root' in query:
+        cube_root()        
+    
+    elif 'power' in query:
+        power(query)
