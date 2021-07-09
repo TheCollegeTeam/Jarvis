@@ -1,8 +1,9 @@
 try:
-    import pyttsx3
+    from corefunction.textToSpeech import speak
+    from corefunction.speechToText import take_command
+    from corefunction.wordContain import isContain
+    from login_page import auto_login
     from datetime import *
-    # this module detect human voice and converts it into text form.
-    import speech_recognition as sr
     # this module is use to request on server.
     import requests
     # This module use to fetch data from wikipedia
@@ -22,14 +23,20 @@ try:
     import psutil
     import pyjokes
     from googlesearch import search
+    import random
     import tkinter as tk
     from PIL import Image, ImageTk
+
 except Exception as e:
     print(e)
-############################################ Weather API #########################################################
 
-# newsUrl = 'http://newsapi.org/v2/top-headlines?country=in&apiKey=9f17ea0361774831bb8906e2426c1e22'
-api_address = "http://api.openweathermap.org/data/2.5/weather?appid=40b98f754f6b23dc8725fd2cfc6d9769&q="
+def whoAmI():
+    data = auto_login()
+    callme = "sir"
+    if data[1]=="female":
+        callme = "ma'am"
+    speak(f"hello {callme} you are {data[0]} you are authorize person who can access me and my settings")
+    print(f"hello {callme} you are {data[0]} you are authorize person who can access me and my settings")
 
 def currentDay ():
     """
@@ -37,7 +44,7 @@ def currentDay ():
     """
     try:
         today = date.today().strftime("%A")
-        speak(f"Today's date is : {today}")
+        speak(f"Today's day is : {today}")
     except Exception as e:
         print(e)
     
@@ -56,12 +63,16 @@ def jokes():
     This function tells joke 
     using pyjoke module.
     """
+    data = auto_login()
+    callme = "sir"
+    if data[1]=="female":
+        callme = "ma'am"
     try:
         My_joke = pyjokes.get_joke(language="en", category="all")  
         speak(My_joke)
         query=take_command().lower()
         if "haha " in query or "good one" in query:
-            speak("thanks sir should i tell you one more joke")
+            speak(f"thanks {callme} should i tell you one more joke")
             query = take_command().lower()
             if "yeah" in query:
                 jokes()
@@ -102,7 +113,7 @@ def osName ():
     except Exception as e:
         print(e)
 
-def screenshot():
+def take_screenshot():
     """
     This function takes a screenshot
     using pyautogui and save it in 
@@ -126,13 +137,59 @@ def screenshot():
         print(e)
         speak("Can not take screenshot")
 
+def show_screenshot():
+    data = auto_login()
+    callme = "sir"
+    if data[1]=="female":
+        callme = "ma'am"
+    if os.path.isdir("screenshot"):
+        screenshot_list = os.listdir("screenshot")
+        list_length = (len(screenshot_list))
+        if list_length !=0:
+            screenshot = (screenshot_list[list_length-1])
+            os.startfile(f"screenshot\\{screenshot}")
+        else :
+            speak(f"sorry {callme} but there is no screenshot you have taken.")
+            time.sleep(.5)
+            speak("if you say than i can take a screenshot for you ")
+            speak("do you want to take screenshot ")
+            query = take_command().lower()
+            if isContain(query,["yes","yeah","okay","of course","sure"]):
+                take_screenshot()
+    else :
+        speak(f"sorry {callme} but there is no screenshot avaliable.")
+        time.sleep(.5)
+        speak("if you say than i can take a screenshot for you ")
+        speak("do you want to take a screenshot ")
+        query = take_command().lower()
+        if isContain(query,["yes","yeah","okay","of course","sure"]):
+            take_screenshot()
+
+def screenshot(query):
+    data = auto_login()
+    callme = "sir"
+    if data[1]=="female":
+        callme = "ma'am"
+    if "take" in query and "screenshot" in query:
+        take_screenshot()
+    elif "show" in query and "screenshot" in query :
+        show_screenshot()
+    else:
+        speak(f"{callme}i don't understant what operation do you want to perform on the screenshot")
+        speak("to take a screenshot just say take screenshot and i will take it for you")
+        speak("and to see a screenshot just say show screenshot")
+
 def speedTest():
     """
     This function used to fetch
     the internet speed.
     """
+    data = auto_login()
+    callme = "sir"
+    if data[1]=="female":
+        callme = "ma'am"
     try:
-        speak("ok sir trying to fetch download speed")
+        speak(f"ok {callme} trying to fetch download speed")
         st = speedtest.Speedtest()
         downloadSpeed = st.download()
         downloadSpeed = downloadSpeed/1048576   #for converting bytes in Kbytes we have to divied by 1024 and then To convert from Kbyte to Mbyte we have to divide by 1024 then we can multiply 1024*1024 = 1048576  
@@ -168,33 +225,50 @@ def news():
             speak(title)
             print(f"        {description}")
             speak(description)
+            if i==1 or i ==3 or i==5:
+                speak("do you want to listen more")
+                query = take_command().lower()
+                if 'yes' in query or 'yeah' in query:
+                    continue
+                else:
+                    break
     except Exception as e:
         print(e)
 
-def weather_data():
+def weather_data(query):
     """
         This function use a API. This function send request to open weather site
         fetch data from that site a speak.
     """
+    
+    data = auto_login()
+    callme = "sir"
+    if data[1]=="female":
+        callme = "ma'am"
+    api_address = "http://api.openweathermap.org/data/2.5/weather?appid=40b98f754f6b23dc8725fd2cfc6d9769&q="
     try:
-        url = api_address + "gorakhpur"  # in url we add a place address to get particular location weather data
-
+        
+        url = api_address + "gorakhpur"
         json_data = requests.get(url).json()
-
         weather_data = json_data['weather'][0]['main']
         temp_data = json_data['main']['temp']
         temp_data = int(temp_data - 273.15)
-        # formatted_data = weather_data + temp_data
-        # print(json_data)
-        speak(f"Hello sir the weather is {weather_data} and the temerature is {temp_data} degree celsius")
+        speak(f"Hello {callme} the weather is {weather_data} and the temerature is {temp_data} degree celsius")
+        print(f"Hello {callme} the weather is {weather_data} and the temerature is {temp_data} degree celsius")
+    
     except Exception as e:
         print(e)
+
 ################################################### Greet Function #############################################
 def greet():
     """
     This Function used for greeting
 
     """
+    data = auto_login()
+    callme = "sir"
+    if data[1]=="female":
+        callme = "ma'am"
     try:
         hour = int(datetime.now().hour)
         today = date.today()
@@ -203,7 +277,7 @@ def greet():
         curr_time = now.strftime("%H %M")
 
         if hour >= 3 and hour <= 11:
-            speak(f"Hello sir good morning  It's {curr_day} and the time is {curr_time}")
+            speak(f"Hello {callme} good morning  It's {curr_day} and the time is {curr_time}")
             weather_data()
 
 
@@ -220,52 +294,16 @@ def greet():
     except Exception as e:
         print(e)
 
-################################################ Speak Function ###############################################
-def speak(audio):
-    """
-    This function convert text to 
-    speech using pyttsx3 module.
-    """
-    try:
-        engine = pyttsx3.init()
-        # engine.setProperty()
-        engine.say(audio)
-        engine.runAndWait()
-    except Exception as e:
-        print(e)
-
-############################################### Take Command ##################################################
-def take_command():
-    """
-    take command takes human voice as input
-    and then convert it into text to perform
-    operation using speech recognition.
-    """
-    r = sr.Recognizer()
-    with sr.Microphone() as source:
-        print("Listening.......")
-        r.pause_threshold = 2
-        r.energy_threshold = 10000
-        audio = r.listen(source)
-
-    try:
-        print("Recognizing....")
-        query = r.recognize_google(audio)
-        print(f"user said : {query}\n")
-
-    except Exception as e:
-        print(e)
-        speak("Say that again please....")
-        return "none"
-    return query
-
-######################################### Who are You ######################################################
 def whoareyou():
     """
     This function tells about that who is this 
     """
+    data = auto_login()
+    callme = "sir"
+    if data[1]=="female":
+        callme = "ma'am"
     try:
-        speak("Hello sir")
+        speak(f"Hello {callme}")
         time.sleep(1)
         speak("i am edith your personal assistant")
         speak("would you like to know what can i do")
@@ -329,33 +367,48 @@ def open_website(query):
         print(e)
 
 def features():
+    data = auto_login()
+    callme = "sir"
+    if data[1]=="female":
+        callme = "ma'am"
     try:
-        speak("hello sir, i can perform many tasks such as calculating numbers or opening a website for you i can play music for you")
+        speak(f"hello {callme}, i can perform many tasks such as calculating numbers or opening a website for you i can play music for you")
         speak("I can automate some task for you ")
     except Exception as e:
         print(e)
 
 def makeAnote():
     try:
+        data = auto_login()
+        callme = "sir"
+        if data[1]=="female":
+            callme = "ma'am"
         if os.path.isdir("notes"):
             lst = os.listdir("notes")
             lstLength = int(len(lst))
             file_path = f"notes\\note{lstLength+1}.txt"
             with open (file_path,"a") as file:
                 def write_note():
-                    speak("Okk sir tell me what to write")
+                    speak(f"Okk {callme} tell me what to write")
                     # query = input("Enter query :")
                     query = take_command()
-                    file.write(query)
+                    file.write(query+" ")
                     # print("Want to add more sir :")
-                    speak("Want to add more sir :")
+                    speak(f"Want to add more {callme} :")
                     # query = input("More ??")
                     query = take_command()
-                    if query in ['yes','yeah','hmm','sure']:
+                    if isContain (query,['yes','yeah','hmm','sure','okay','of course','ok']):
                         write_note()
                     else:
-                        print("Done sir")
-                        speak("saving note sir")
+                        print(f"Done {callme}")
+                        speak(f"Done {callme}")
+                        speak(f"saving note {callme}")
+                        speak("want to see your notes")
+                        query = take_command().lower()
+                        if isContain (query,['yes','yeah','hmm','sure','okay','of course','ok']):
+                            speak(f"{random.choice['opening notes','showing note']}")
+                            show_note()
+
                 write_note()
         else:
             os.makedirs("notes")
@@ -363,17 +416,54 @@ def makeAnote():
     except Exception as e:
         print(e)
 
-def myBirthday():
-    try:
-        root = tk.Tk()
-        image1 = Image.open("resources\\images\\birthdayImg.png")
-        test = ImageTk.PhotoImage(image1)
-        label1 = tk.Label(image=test)
-        label1.pack()
-        root.after(10000,lambda:root.destroy())
-        root.mainloop()
-    except Exception as e:
-        print(e)
+def show_note():
+    data = auto_login()
+    callme = "sir"
+    if data[1]=="female":
+        callme = "ma'am"
+    if os.path.isdir("notes"):
+        note_list = os.listdir("notes")
+        list_length = (len(note_list))
+        if list_length !=0:
+            note = (note_list[list_length-1])
+            os.startfile(f"notes\\{note}")
+        else :
+            speak(f"sorry {callme} but there is no notes avaliable in notebook.")
+            time.sleep(.5)
+            speak("if you say than i can create note for you ")
+            speak("do you want to create note ")
+            query = take_command().lower()
+            if isContain(query,["yes","yeah","okay","of course","sure"]):
+                makeAnote()
+    else :
+        speak(f"sorry {callme} but there is no notes avaliable in notebook.")
+        time.sleep(.5)
+        speak("if you say than i can create note for you ")
+        speak("do you want to create note ")
+        query = take_command().lower()
+        if isContain(query,["yes","yeah","okay","of course","sure"]):
+            makeAnote()
+
+def note(query):
+    if "note" in query and "make" in query or "create" in query:
+        makeAnote()
+    elif "note" in query and "show" in query:
+        show_note()
+    else:
+        speak("I don't understant what do you want to perform on the note")
+        speak("to create a note just say make a note or create a note")
+        speak("and to see a note just say show note")
+
+def bye():
+    data = auto_login()
+    callme = "sir"
+    if data[1]=="female":
+        callme = "ma'am"
+    exit_greetings = ["goodbye","exiting","okk going to sleep","okk bye"]
+    speak(f"{random.choice(exit_greetings)} {callme}")
+    print(f"{random.choice(exit_greetings)} {callme}")
+    quit()
 
 if __name__ == '__main__':
+    # bye()
     pass

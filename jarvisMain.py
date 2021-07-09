@@ -1,10 +1,19 @@
 try:
+    import os
     from home import *
     from calculator import *
-    from conversion import *
+    from conversion import Celsius_to_fahrenhite
+    from conversion import fahrenhite_to_Celsius
     # from alarm import *
     from threading import Thread
+    from alarm.countTimer import getTime
+    from wishing.birthdayWishing import myBirthday
+    from threading import Thread
+    from corefunction.wordContain import isContain
     from appData import openApp,setting_page
+    from keyboardAutomation import keyboradAutomation
+    from corefunction.speechToText import speak
+    from login_page import create_login_window,auto_login
 except Exception as e:
     print(e)
 """
@@ -25,6 +34,10 @@ today's date
 today's day
 setting alarm
 convert temeperature
+make a note
+copy,paste,select all
+undo,cut
+set timer
 """
 ################################################## Main function #############################################
 
@@ -33,53 +46,53 @@ if __name__ == "__main__":
     # take_command()
     # city = input("Enter city name :")
     # weather_data("gorakhpur")
+    path = "userDetails"
+    if os.path.isdir(path)==False:
+        create_login_window()
+    else:
+        auto_login()
+
     while True:
         # take_command()
-        # query = take_command().lower()
+        query = take_command().lower()
         
-        query = input("Enter query :").lower()
-        query = query.replace(":"," ")
-        query = query.replace(".","")
+        # query = input("Enter query :").lower()
+        # query = query.replace(":"," ")
+        # query = query.replace(".","")
         print(query)
-
         if 'wikipedia' in query :
             speak('searching wikipedia.....')
             query = query.replace("wikipedia","")
             results = wikipedia.summary(query, sentence=2)
             speak(results)
 
-        elif 'greet me' in query or 'wish me' in query:
+        elif isContain(query,["greet","wish","good morning","good afternoon","good evening","good night"]):
             greet()
+
+        elif isContain(query,["joke","jokes","make me laugh","laugh"]):
+            jokes()
+
+        elif isContain(query,["who i am","who am i","about me","about user","user detail"]):
+            whoAmI()
+
+        elif isContain(query,["copy","paste","select all","cut","undo","move"]):
+            keyboradAutomation(query)
 
         elif 'my birthday' in query:
             myBirthday()
 
-        elif 'exit' in query or 'bye' in query or 'goodbye' in query :
-            quit()
+        elif isContain(query,["exit","bye","goodbye","sleep"]) :
+            bye()
+        
+        elif isContain(query,["timer"]):
+            print("enterd in timer")
+            t1 = Thread(target=getTime,args=(query,))
+            t1.start()
 
-        elif 'add path' in query or 'add application' in query or 'setting' in query:
+        elif 'open' in query and 'setting' in query:
             setting_page()
-            
-        # elif 'set alarm' in query and 'am' in query:
-        #     t1 = Thread(target=am,args=(query,))
-        #     t1.start()
-        #     t1.join()
-
-        # elif 'set alarm' in query and 'pm' in query:
-
-        #     t2 = Thread(target=pm,args=(query,))
-        #     t2.start()
-        #     t2.join()
-
-        # elif 'set alarm' in query:
-
-        #     t3 = Thread(target=set_alarm_24_hour_clock,args=(query,))
-        #     t3.start()
-        #     t3.join()
 
         elif 'open' in query:
-            print("reached here")
-            # create_table()
             openApp(query)
 
         elif 'subtract' in query or 'minus' in query or '-' in query :
@@ -118,48 +131,50 @@ if __name__ == "__main__":
         elif 'celsius to fahrenheit' in query:
             Celsius_to_fahrenhite(query)  
 
-        elif 'news' in query:
+        elif isContain(query,["news","today's update"]) :
             news()
 
-        elif 'current time' in query or 'time' in query:
+        elif isContain(query,["current time","time","now time"]):
             current_time()
             
-        elif 'youtube' in query:
-            speak("opening Youtube")
+        elif isContain(query,["youtube"]):
             webbrowser.open("youtube.com")
 
-        elif 'battery percentage' in query :
+        elif isContain(query,["battery percentage","power level"]) :
             batteryPercantage()
 
-        elif 'who are you' in query:
+        elif isContain(query,["who are you","about yourself"]):
             whoareyou()
 
-        elif 'weather' in query:
+        elif isContain(query,["weather"]):
             weather_data()
 
-        elif 'internet speed' in query:
+        elif isContain(query,['internet speed']):
             speedTest()
 
-        elif 'take a screenshot' in query or 'screenshot' in query:
-            screenshot()    
-
-        elif 'operating system' in query or 'os' in query:
+        elif isContain(query, ["take a screenshot","screenshot"]):
+            screenshot(query)    
+        
+        elif isContain(query,["operating system","os"]):
             osName()
 
-        elif 'current date' in query or 'today\'s date ' in query or 'date' in query:
+        elif isContain(query,["current date", "today\'s date","date"]):
             currentDate()
 
-        elif 'current day' in query or 'today\'s day ' in query or 'day' in query:
+        elif isContain(query,["today's day","current day","day"]):
             currentDay()    
         
-        # elif 'open' in query:
-        #     open_website(query)
-
-        elif 'what task' in query or 'features' in query or 'feature' in query:
+        elif isContain(query,["what task","features","feature"]) :
             features()
 
-        elif 'make a note' in query or 'create a note' in query:
-            makeAnote()
+        elif isContain(query,["make a note","create a note","note","notes","show note"]):
+            note(query)
+
+        elif isContain(query,["turn off","switch off","shutdown","shut down"]):
+            shutdown()
+
+        elif isContain(query,["restart","reboot"]):
+            restart()
 
         else:
             speak("wrong choice")
