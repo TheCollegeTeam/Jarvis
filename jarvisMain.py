@@ -1,3 +1,4 @@
+
 try:
     from home import *
     from calculator import *
@@ -7,6 +8,13 @@ try:
     from appData import openApp,setting_page
 except Exception as e:
     print(e)
+=======
+from home import *
+from calculator import *
+from conversion import *
+from alarm import *
+from threading import Thread
+
 """
 greet
 calculate
@@ -48,6 +56,7 @@ if __name__ == "__main__":
             results = wikipedia.summary(query, sentence=2)
             speak(results)
 
+
         elif 'greet me' in query or 'wish me' in query:
             greet()
 
@@ -81,6 +90,30 @@ if __name__ == "__main__":
             print("reached here")
             # create_table()
             openApp(query)
+=======
+        if 'greet me' in query or 'wish me' in query:
+            greet()
+
+        elif 'exit' in query or 'bye' in query or 'goodbye' in query :
+            quit()
+
+        elif 'set alarm' in query and 'am' in query:
+            t1 = Thread(target=am,args=(query,))
+            t1.start()
+            t1.join()
+
+        elif 'set alarm' in query and 'pm' in query:
+
+            t2 = Thread(target=pm,args=(query,))
+            t2.start()
+            t2.join()
+
+        elif 'set alarm' in query:
+
+            t3 = Thread(target=set_alarm_24_hour_clock,args=(query,))
+            t3.start()
+            t3.join()
+
 
         elif 'subtract' in query or 'minus' in query or '-' in query :
             subtract_num(query)
@@ -152,6 +185,7 @@ if __name__ == "__main__":
         elif 'current day' in query or 'today\'s day ' in query or 'day' in query:
             currentDay()    
         
+
         # elif 'open' in query:
         #     open_website(query)
 
@@ -160,6 +194,13 @@ if __name__ == "__main__":
 
         elif 'make a note' in query or 'create a note' in query:
             makeAnote()
+=======
+        elif 'open' in query:
+            open_website(query)
+
+        elif 'what task' in query or 'features' in query or 'feature' in query:
+            features()
+
 
         else:
             speak("wrong choice")
