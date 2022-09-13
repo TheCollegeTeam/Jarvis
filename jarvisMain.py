@@ -1,3 +1,4 @@
+
 try:
     import os
     from home import *
@@ -16,6 +17,13 @@ try:
     from login_page import create_login_window,auto_login
 except Exception as e:
     print(e)
+=======
+from home import *
+from calculator import *
+from conversion import *
+from alarm import *
+from threading import Thread
+
 """
 greet
 calculate
@@ -67,6 +75,10 @@ if __name__ == "__main__":
             speak(results)
 
         elif isContain(query,["greet","wish","good morning","good afternoon","good evening","good night"]):
+=======
+
+        elif 'greet me' in query or 'wish me' in query:
+
             greet()
 
         elif isContain(query,["joke","jokes","make me laugh","laugh"]):
@@ -94,6 +106,30 @@ if __name__ == "__main__":
 
         elif 'open' in query:
             openApp(query)
+=======
+        if 'greet me' in query or 'wish me' in query:
+            greet()
+
+        elif 'exit' in query or 'bye' in query or 'goodbye' in query :
+            quit()
+
+        elif 'set alarm' in query and 'am' in query:
+            t1 = Thread(target=am,args=(query,))
+            t1.start()
+            t1.join()
+
+        elif 'set alarm' in query and 'pm' in query:
+
+            t2 = Thread(target=pm,args=(query,))
+            t2.start()
+            t2.join()
+
+        elif 'set alarm' in query:
+
+            t3 = Thread(target=set_alarm_24_hour_clock,args=(query,))
+            t3.start()
+            t3.join()
+
 
         elif 'subtract' in query or 'minus' in query or '-' in query :
             subtract_num(query)
@@ -175,6 +211,24 @@ if __name__ == "__main__":
 
         elif isContain(query,["restart","reboot"]):
             restart()
+=======
+
+        # elif 'open' in query:
+        #     open_website(query)
+
+        elif 'what task' in query or 'features' in query or 'feature' in query:
+            features()
+
+        elif 'make a note' in query or 'create a note' in query:
+            makeAnote()
+=======
+        elif 'open' in query:
+            open_website(query)
+
+        elif 'what task' in query or 'features' in query or 'feature' in query:
+            features()
+
+
 
         else:
             speak("wrong choice")
